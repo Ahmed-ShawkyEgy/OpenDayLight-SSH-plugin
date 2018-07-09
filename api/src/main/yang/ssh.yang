@@ -1,0 +1,9 @@
+module ssh {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:ssh";
+    prefix "ssh";
+
+    revision "2015-01-05" {
+        description "Initial revision of ssh model";
+    }
+}
