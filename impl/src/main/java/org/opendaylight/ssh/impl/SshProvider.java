@@ -11,20 +11,32 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
+
 public class SshProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SshProvider.class);
 
     private final DataBroker dataBroker;
+    private final RpcProviderRegistry rpcProviderRegistry;
 
-    public SshProvider(final DataBroker dataBroker) {
+    private RpcRegistration<SshService> serviceRegistration;
+
+
+    public SshProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
         this.dataBroker = dataBroker;
+        this.rpcProviderRegistry = rpcProviderRegistry;
+
     }
 
     /**
      * Method called when the blueprint container is created.
      */
     public void init() {
+      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
+
         LOG.info("SshProvider Session Initiated");
     }
 
@@ -32,6 +44,8 @@ public class SshProvider {
      * Method called when the blueprint container is destroyed.
      */
     public void close() {
+      serviceRegistration.close();
+
         LOG.info("SshProvider Closed");
     }
 }
