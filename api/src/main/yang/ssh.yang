@@ -6,4 +6,23 @@ module ssh {
     revision "2015-01-05" {
         description "Initial revision of ssh model";
     }
+
+    rpc command {
+    input {
+        leaf ip {
+            type string;
+        }
+        leaf port{
+          type int32;
+        }
+        leaf cmd{
+          type string;
+        }
+    }
+    output {
+        leaf response {
+            type string;
+        }
+    }
+}
 }
