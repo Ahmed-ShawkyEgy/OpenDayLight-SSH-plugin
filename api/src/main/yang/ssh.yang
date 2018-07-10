@@ -15,6 +15,12 @@ module ssh {
         leaf port{
           type int32;
         }
+        leaf user{
+          type string;
+        }
+        leaf password{
+          type string;
+        }
         leaf cmd{
           type string;
         }
@@ -25,4 +31,6 @@ module ssh {
         }
     }
 }
+
+
 }
