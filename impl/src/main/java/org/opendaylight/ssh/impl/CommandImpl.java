@@ -42,7 +42,7 @@ public class CommandImpl implements SshService {
         config.put("StrictHostKeyChecking", "no");
         session.setConfig(config);
 
-        
+
         session.connect();
 
 
@@ -51,7 +51,6 @@ public class CommandImpl implements SshService {
 
 
         channel.setInputStream(null);
-        // ((ChannelExec)channel).setErrStream(System.err);
 
         InputStream in=channel.getInputStream();
 
@@ -62,12 +61,10 @@ public class CommandImpl implements SshService {
           while(in.available()>0){
             int i=in.read(tmp, 0, 1024);
             if(i<0)break;
-            // System.out.print(new String(tmp, 0, i));
             response.append(new String(tmp, 0, i));
           }
           if(channel.isClosed()){
             if(in.available()>0) continue;
-            // System.out.println("exit-status: "+channel.getExitStatus());
             response.append("exit-status: "+channel.getExitStatus()+"\n");
 
             break;
@@ -78,16 +75,14 @@ public class CommandImpl implements SshService {
         session.disconnect();
       }
       catch(Exception e){
-        // System.out.println(e);
-//        sshBuilder.setResponse(e.toString());
     	  response = new StringBuilder(e.toString());
       }
         sshBuilder.setResponse(removeEOL(response.toString()));
 //        sshBuilder.setResponse(user + "@"+ip +":"+ port +" password:"+password + "cmd:"+cmd);
         return RpcResultBuilder.success(sshBuilder.build()).buildFuture();
     }
-    
-    
+
+
     private String removeEOL(String s)
     {
     	return s.replaceAll("(\\r|\\n)", " ");
