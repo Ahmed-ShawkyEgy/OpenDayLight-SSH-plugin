@@ -10,8 +10,6 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
 import com.jcraft.jsch.*;
-import java.awt.*;
-import javax.swing.*;
 import java.io.*;
 
 
@@ -29,14 +27,22 @@ public class CommandImpl implements SshService {
         String password = input.getPassword();
         String cmd = input.getCmd();
 
+        StringBuilder response = new StringBuilder();
+
         try{
+
         // Initiate session
         JSch jsch=new JSch();
-        Session session=jsch.getSession(user,ip,port);
+
+        Session session=jsch.getSession(user, ip, port);
         session.setPassword(password);
 
-        // Throws JSchException
-        // https://stackoverflow.com/questions/2003419/com-jcraft-jsch-jschexception-unknownhostkey
+        // Security flaw
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+
+        
         session.connect();
 
 
@@ -52,7 +58,6 @@ public class CommandImpl implements SshService {
         channel.connect();
 
         byte[] tmp=new byte[1024];
-        StringBuilder response = new StringBuilder();
         while(true){
           while(in.available()>0){
             int i=in.read(tmp, 0, 1024);
@@ -71,14 +76,21 @@ public class CommandImpl implements SshService {
         }
         channel.disconnect();
         session.disconnect();
-        sshBuilder.setResponse(response.toString());
       }
       catch(Exception e){
         // System.out.println(e);
-        sshBuilder.setResponse(e.toString());
+//        sshBuilder.setResponse(e.toString());
+    	  response = new StringBuilder(e.toString());
       }
-        // sshBuilder.setResponse(input.getCmd());
+        sshBuilder.setResponse(removeEOL(response.toString()));
+//        sshBuilder.setResponse(user + "@"+ip +":"+ port +" password:"+password + "cmd:"+cmd);
         return RpcResultBuilder.success(sshBuilder.build()).buildFuture();
+    }
+    
+    
+    private String removeEOL(String s)
+    {
+    	return s.replaceAll("(\\r|\\n)", " ");
     }
 
 }
