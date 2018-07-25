@@ -54,6 +54,7 @@ public class Connection {
 	 * */
 	public void execute(String command) throws Exception
 	{
+    command = command.trim();
     if(command.isEmpty())
       throw new Exception("Can not issue empty commands");
 		sendCommand(command);
