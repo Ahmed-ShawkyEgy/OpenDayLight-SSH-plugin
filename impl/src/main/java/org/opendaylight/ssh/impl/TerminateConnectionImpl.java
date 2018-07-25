@@ -35,7 +35,7 @@ public class TerminateConnectionImpl  {
           terminateConnectionBuilder.setResponse("Connection terminated successfully");
         }catch(Exception e)
         {
-          terminateConnectionBuilder.setResponse(e.getStackTrace().toString());
+          terminateConnectionBuilder.setResponse("Failed to terminate the connection; Either the sessionID has already expired or it never existed");
         }
 
         return RpcResultBuilder.success(terminateConnectionBuilder.build()).buildFuture();

@@ -38,7 +38,7 @@ public class CommandImpl  {
           sshBuilder.setResponse(response);
         }catch(Exception e)
         {
-            sshBuilder.setResponse(e.getStackTrace().toString());
+            sshBuilder.setResponse("Failed to execute; either the sessionID has expired or the IO streams have been comprimised or the command paramater was empty");
         }
         return RpcResultBuilder.success(sshBuilder.build()).buildFuture();
     }

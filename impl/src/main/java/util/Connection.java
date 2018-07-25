@@ -52,8 +52,10 @@ public class Connection {
 	 *
 	 * @param command the command to be executed
 	 * */
-	public void execute(String command) throws IOException
+	public void execute(String command) throws Exception
 	{
+    if(command.isEmpty())
+      throw new Exception("Can not issue empty commands");
 		sendCommand(command);
 		sendCommand("");
 	}
@@ -106,7 +108,7 @@ public class Connection {
 
 	private void sendCommand(String command) throws IOException
 	{
-		inputWriter.println(command);
+		inputWriter.println(command.trim());
 		inputWriter.flush();
 	}
 
