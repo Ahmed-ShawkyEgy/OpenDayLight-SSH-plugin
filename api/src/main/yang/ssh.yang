@@ -14,6 +14,7 @@ module ssh {
          }
          leaf port{
            type int32;
+           default 22;
          }
          leaf user{
            type string;
