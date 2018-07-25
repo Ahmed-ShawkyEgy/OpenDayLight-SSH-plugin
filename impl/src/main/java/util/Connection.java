@@ -42,8 +42,7 @@ public class Connection {
 	      channel.connect();
 
 	      sendCommand("");
-	      System.out.println(getResponse(1));
-
+        getResponse(1);
 	      return true;
 	}
 

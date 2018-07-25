@@ -34,19 +34,10 @@ module ssh {
 
     rpc command {
     input {
-        leaf ip {
+        leaf sessionID {
             type string;
         }
-        leaf port{
-          type int32;
-        }
-        leaf user{
-          type string;
-        }
-        leaf password{
-          type string;
-        }
-        leaf cmd{
+        leaf command{
           type string;
         }
     }
@@ -65,7 +56,9 @@ rpc terminateConnection{
 
   }
   output{
-
+    leaf response{
+      type string;
+    }
   }
 }
 

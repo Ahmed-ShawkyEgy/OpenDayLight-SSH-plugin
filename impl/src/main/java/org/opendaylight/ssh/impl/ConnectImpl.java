@@ -15,7 +15,12 @@ import util.*;
 
 
 public class ConnectImpl  {
+    private ConnectionsContainer container;
 
+    public ConnectImpl(ConnectionsContainer container)
+    {
+      this.container = container;
+    }
 
     public Future<RpcResult<ConnectOutput>> connect(ConnectInput input) {
         ConnectOutputBuilder connectBuilder = new ConnectOutputBuilder();
@@ -28,9 +33,21 @@ public class ConnectImpl  {
 
         Connection connection = new Connection();
 
-        // sshBuilder.setResponse(removeEOL(response.toString()));
-       connectBuilder.setStatus(user + "@"+ip +":"+ port +"<br> password:"+password);
-       connectBuilder.setSessionID("awd@12asf5g5_a2");
+        try{
+        String id = container.addConnection(connection);
+        connection.connect(user,ip,port,password);
+
+        connectBuilder.setStatus("Connected Successfully");
+        connectBuilder.setSessionID(id);
+
+        }
+        catch(Exception e)
+        {
+          connectBuilder.setStatus(e.getStackTrace().toString());
+          connectBuilder.setSessionID("undefined");
+
+        }
+
         return RpcResultBuilder.success(connectBuilder.build()).buildFuture();
     }
 

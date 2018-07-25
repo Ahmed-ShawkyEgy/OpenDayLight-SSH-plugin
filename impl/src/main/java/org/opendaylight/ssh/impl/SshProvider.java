@@ -32,7 +32,6 @@ public class SshProvider {
     public SshProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
         this.dataBroker = dataBroker;
         this.rpcProviderRegistry = rpcProviderRegistry;
-        ConnectionsContainer container = new ConnectionsContainer();
     }
 
     /**
@@ -41,6 +40,7 @@ public class SshProvider {
     public void init() {
       // serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
       // connectRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new ConnectImpl());
+      container = new ConnectionsContainer();
       serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl(container));
         LOG.info("SshProvider Session Initiated");
     }

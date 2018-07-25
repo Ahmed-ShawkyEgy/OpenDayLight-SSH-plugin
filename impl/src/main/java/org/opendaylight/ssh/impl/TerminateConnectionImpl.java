@@ -11,18 +11,34 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
 import com.jcraft.jsch.*;
 import java.io.*;
+import util.*;
 
 
 
 public class TerminateConnectionImpl  {
 
+  private ConnectionsContainer container;
+
+  public TerminateConnectionImpl(ConnectionsContainer container)
+  {
+    this.container = container;
+  }
+
 
     public Future<RpcResult<TerminateConnectionOutput>> terminateConnection(TerminateConnectionInput input) {
         TerminateConnectionOutputBuilder terminateConnectionBuilder = new TerminateConnectionOutputBuilder();
 
+        String id = input.getSessionID();
+
+        try{
+          container.removeConnection(id);
+          terminateConnectionBuilder.setResponse("Connection terminated successfully");
+        }catch(Exception e)
+        {
+          terminateConnectionBuilder.setResponse(e.getStackTrace().toString());
+        }
+
         return RpcResultBuilder.success(terminateConnectionBuilder.build()).buildFuture();
     }
-
-
 
 }

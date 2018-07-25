@@ -33,17 +33,17 @@ public class SshServiceImpl implements SshService {
 
     @Override
     public Future<RpcResult<ConnectOutput>> connect(ConnectInput input) {
-        return (new ConnectImpl()).connect(input);
+        return (new ConnectImpl(container)).connect(input);
     }
 
     @Override
     public Future<RpcResult<CommandOutput>> command(CommandInput input) {
-      return (new CommandImpl()).command(input);
+      return (new CommandImpl(container)).command(input);
     }
 
     @Override
     public Future<RpcResult<TerminateConnectionOutput>> terminateConnection(TerminateConnectionInput input){
-      return (new TerminateConnectionImpl()).terminateConnection(input);
+      return (new TerminateConnectionImpl(container)).terminateConnection(input);
     }
 
 }
