@@ -11,6 +11,9 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev1
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.ConnectOutput;
 
 
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.TerminateConnectionInput;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.TerminateConnectionOutput;
+
 
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
@@ -30,6 +33,11 @@ public class SshServiceImpl implements SshService {
     @Override
     public Future<RpcResult<CommandOutput>> command(CommandInput input) {
       return (new CommandImpl()).command(input);
+    }
+
+    @Override
+    public Future<RpcResult<TerminateConnection>> terminateConnection(TerminateConnection input){
+      return (new TerminateConnection()).terminateConnection(input);
     }
 
 }

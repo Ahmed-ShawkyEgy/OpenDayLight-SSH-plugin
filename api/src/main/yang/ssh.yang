@@ -57,5 +57,17 @@ module ssh {
     }
 }
 
+rpc terminateConnection{
+  input{
+    leaf{
+        sessionID{
+          type string;
+        }
+    }
+  }
+  output{
+
+  }
+}
 
 }
