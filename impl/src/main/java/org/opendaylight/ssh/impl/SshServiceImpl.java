@@ -36,8 +36,8 @@ public class SshServiceImpl implements SshService {
     }
 
     @Override
-    public Future<RpcResult<TerminateConnection>> terminateConnection(TerminateConnection input){
-      return (new TerminateConnection()).terminateConnection(input);
+    public Future<RpcResult<TerminateConnectionOutput>> terminateConnection(TerminateConnectionInput input){
+      return (new TerminateConnectionImpl()).terminateConnection(input);
     }
 
 }

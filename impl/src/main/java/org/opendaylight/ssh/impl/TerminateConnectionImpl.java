@@ -18,7 +18,7 @@ public class TerminateConnectionImpl  {
 
 
     public Future<RpcResult<TerminateConnectionOutput>> terminateConnection(TerminateConnectionInput input) {
-        ConnectOutputBuilder terminateConnectionBuilder = new ConnectOutputBuilder();
+        TerminateConnectionOutputBuilder terminateConnectionBuilder = new TerminateConnectionOutputBuilder();
 
         return RpcResultBuilder.success(terminateConnectionBuilder.build()).buildFuture();
     }

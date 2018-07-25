@@ -59,11 +59,10 @@ module ssh {
 
 rpc terminateConnection{
   input{
-    leaf{
-        sessionID{
+    leaf sessionID{
           type string;
         }
-    }
+
   }
   output{
 
