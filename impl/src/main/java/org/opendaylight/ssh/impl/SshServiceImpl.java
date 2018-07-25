@@ -20,10 +20,16 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
 import com.jcraft.jsch.*;
 import java.io.*;
-
+import util.*;
 
 
 public class SshServiceImpl implements SshService {
+    private ConnectionsContainer container;
+
+    public SshServiceImpl(ConnectionsContainer container)
+    {
+      this.container = container;
+    }
 
     @Override
     public Future<RpcResult<ConnectOutput>> connect(ConnectInput input) {

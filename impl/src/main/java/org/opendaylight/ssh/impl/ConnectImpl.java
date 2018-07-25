@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
 import com.jcraft.jsch.*;
 import java.io.*;
-
+import util.*;
 
 
 public class ConnectImpl  {
@@ -25,6 +25,8 @@ public class ConnectImpl  {
         String ip = input.getIp();
         int port = input.getPort();
         String password = input.getPassword();
+
+        Connection connection = new Connection();
 
         // sshBuilder.setResponse(removeEOL(response.toString()));
        connectBuilder.setStatus(user + "@"+ip +":"+ port +"<br> password:"+password);

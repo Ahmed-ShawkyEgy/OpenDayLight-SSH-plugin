@@ -15,6 +15,8 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
 
+import util.*;
+
 public class SshProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SshProvider.class);
@@ -25,10 +27,12 @@ public class SshProvider {
     private RpcRegistration<SshService> serviceRegistration;
     private RpcRegistration<SshService> connectRegistration;
 
+    private ConnectionsContainer container;
+
     public SshProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
         this.dataBroker = dataBroker;
         this.rpcProviderRegistry = rpcProviderRegistry;
-
+        ConnectionsContainer container = new ConnectionsContainer();
     }
 
     /**
@@ -37,7 +41,7 @@ public class SshProvider {
     public void init() {
       // serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
       // connectRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new ConnectImpl());
-      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl());
+      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl(container));
         LOG.info("SshProvider Session Initiated");
     }
 
@@ -45,6 +49,10 @@ public class SshProvider {
      * Method called when the blueprint container is destroyed.
      */
     public void close() {
+      try{
+      container.closeAllConnections();
+    }catch(Exception e)
+    {}
       serviceRegistration.close();
       // connectRegistration.close();
         LOG.info("SshProvider Closed");
