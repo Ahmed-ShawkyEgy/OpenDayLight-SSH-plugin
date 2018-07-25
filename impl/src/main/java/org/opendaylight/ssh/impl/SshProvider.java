@@ -23,7 +23,7 @@ public class SshProvider {
     private final RpcProviderRegistry rpcProviderRegistry;
 
     private RpcRegistration<SshService> serviceRegistration;
-
+    private RpcRegistration<SshService> connectRegistration;
 
     public SshProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
         this.dataBroker = dataBroker;
@@ -35,8 +35,9 @@ public class SshProvider {
      * Method called when the blueprint container is created.
      */
     public void init() {
-      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
-
+      // serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
+      // connectRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new ConnectImpl());
+      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl());
         LOG.info("SshProvider Session Initiated");
     }
 
@@ -45,7 +46,7 @@ public class SshProvider {
      */
     public void close() {
       serviceRegistration.close();
-
+      // connectRegistration.close();
         LOG.info("SshProvider Closed");
     }
 }

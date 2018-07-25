@@ -7,6 +7,31 @@ module ssh {
         description "Initial revision of ssh model";
     }
 
+    rpc connect{
+     input{
+         leaf ip {
+             type string;
+         }
+         leaf port{
+           type int32;
+         }
+         leaf user{
+           type string;
+         }
+         leaf password{
+           type string;
+         }
+     }
+     output{
+          leaf status{
+              type string;
+          }
+          leaf sessionID{
+              type string;
+          }
+     }
+    }
+
     rpc command {
     input {
         leaf ip {

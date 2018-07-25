@@ -14,9 +14,8 @@ import java.io.*;
 
 
 
-public class CommandImpl implements SshService {
+public class CommandImpl  {
 
-    @Override
     public Future<RpcResult<CommandOutput>> command(CommandInput input) {
         CommandOutputBuilder sshBuilder = new CommandOutputBuilder();
 
