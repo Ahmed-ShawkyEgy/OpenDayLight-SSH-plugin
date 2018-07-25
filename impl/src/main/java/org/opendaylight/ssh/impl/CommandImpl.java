@@ -44,9 +44,4 @@ public class CommandImpl  {
     }
 
 
-    private String removeEOL(String s)
-    {
-    	return s.replaceAll("(\\r|\\n)", " ");
-    }
-
 }

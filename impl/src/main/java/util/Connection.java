@@ -117,11 +117,9 @@ public class Connection {
 	private String readLine() throws IOException
 	{
 		String line = "";
-		byte[] buffer = new byte[1];
 		while(output.available()>=0)
 		{
-			output.read(buffer,0,1);
-			char c = (char) buffer[0];
+			char c = (char) output.read();
 			if(c=='\n')break;
 			line += c;
 		}
