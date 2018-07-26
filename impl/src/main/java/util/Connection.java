@@ -103,8 +103,10 @@ public class Connection {
 	 * which is used to determine when the prompt is reached.
 	 *
 	 * @param command the command to be executed
+	 * @throws SessionException
+	 * @throws IOException
 	 * */
-	public void execute(String command) throws Exception
+	public void execute(String command) throws SessionException, IOException
 	{
 		verifyConnection();
     command = command.trim();
@@ -160,8 +162,9 @@ public class Connection {
 	 *
 	 * @param  repeats	the number of expected repetitions of the prompt line
 	 * @return          the response received from the stream
+	 * @throws SessionException
 	 * */
-	private String getResponse(int repeats) throws IOException
+	private String getResponse(int repeats) throws IOException, SessionException 
 	{
 		LOG.debug("Start reading response from server {}",server);
 		String response = "";
