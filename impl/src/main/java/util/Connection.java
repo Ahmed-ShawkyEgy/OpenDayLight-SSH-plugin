@@ -22,6 +22,9 @@ public class Connection {
 	private OutputStream input;
 	private PrintWriter inputWriter;
 
+	private boolean isConnected;
+
+
 	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
 	private String server;
 
@@ -29,6 +32,7 @@ public class Connection {
 
 	public Connection() {
 		jsch = new JSch();
+		isConnected = false;
 	}
 
 	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException
@@ -88,6 +92,7 @@ public class Connection {
 					LOG.debug("Failed to send empty inital command to {}",server,e);
 					return false;
 				}
+				isConnected = true;
 				LOG.debug("Successfully connected a channel with {} !",server);
 
 	      return true;
@@ -101,6 +106,7 @@ public class Connection {
 	 * */
 	public void execute(String command) throws Exception
 	{
+		verifyConnection();
     command = command.trim();
     if(command.isEmpty())
       throw new Exception("Can not issue empty commands");
@@ -121,6 +127,15 @@ public class Connection {
 		return getResponse(2);
 	}
 
+	public void verifyConnection() throws IOException, SessionException
+	{
+		if(!isConnected)
+		{
+			terminate();
+			throw new SessionException("Connection Timeout");
+		}
+	}
+
 	public void terminate() throws IOException
 	{
 		LOG.debug("Trying to close all streams with server{}",server);
@@ -130,8 +145,8 @@ public class Connection {
 		LOG.debug("Trying to disconnect the session with server {}",server);
 		channel.disconnect();
 		session.disconnect();
+		isConnected = false;
 		LOG.debug("Conection with server {} has been terminated successfully",server);
-
 	}
 
 
@@ -152,9 +167,9 @@ public class Connection {
 		String response = "";
 		String l1 = "" , l2 = "";
 		int times = repeats+1;
-		while(true)
+		while(isConnected)
 		{
-			LOG.debug("Waiting for response from {}",server);
+			LOG.debug("Reading response from {}",server);
 			l2 = readLine();
 			LOG.debug("Read {} from {}",l2,server);
 			response += l2;
@@ -165,6 +180,7 @@ public class Connection {
 				l1 = l2;
 		}
 		LOG.debug("Finished reading response from {}",server);
+		verifyConnection();
 		return response.substring(0, response.length()-times*l1.length()).trim();
 	}
 
@@ -181,9 +197,13 @@ public class Connection {
 		String line = "";
 		while(output.available()>=0)
 		{
-			char c = (char) output.read();
+			int c = output.read();
 			if(c=='\n')break;
-			line += c;
+			if(c==-1) {
+				isConnected = false;
+				break;
+			}
+			line += (char)c;
 		}
 		return line;
 	  }
