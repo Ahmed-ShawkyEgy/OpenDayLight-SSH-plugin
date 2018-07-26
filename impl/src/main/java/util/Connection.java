@@ -184,7 +184,8 @@ public class Connection {
 				l1 = l2;
 		}
 		LOG.debug("Finished reading response from {}",server);
-		isConnected();
+		if(!isConnected())
+			return response;
 		return response.substring(0, response.length()-times*l1.length()).trim();
 	}
 
