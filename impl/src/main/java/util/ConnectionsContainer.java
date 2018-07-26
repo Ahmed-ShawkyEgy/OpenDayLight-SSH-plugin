@@ -19,9 +19,18 @@ public class ConnectionsContainer {
 		IDpool = new HashSet<String>();
 	}
 
-	public Connection getConnection(String id)
+	public Connection getConnection(String id) throws ConnectionException , IOException
 	{
-		return container.get(id);
+		Connection connection = container.get(id);
+		if(connection == null)
+			throw new ConnectionException("SessionID doesn't exist");
+		if(!connection.isConnected())
+		{
+			connection.terminate();
+			removeConnection(id);
+			throw new ConnectionException("Connection Timeout");
+		}
+		return connection;
 	}
 
 	public String addConnection(Connection connection) throws ConnectionException

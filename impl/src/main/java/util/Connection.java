@@ -22,7 +22,7 @@ public class Connection {
 	private OutputStream input;
 	private PrintWriter inputWriter;
 
-	private boolean isConnected;
+	private boolean connected;
 
 
 	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
@@ -32,10 +32,10 @@ public class Connection {
 
 	public Connection() {
 		jsch = new JSch();
-		isConnected = false;
+		connected = false;
 	}
 
-	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException
+	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException,ConnectionException
 	{
 				server = user+"@"+host+":"+port;
 
@@ -92,7 +92,7 @@ public class Connection {
 					LOG.debug("Failed to send empty inital command to {}",server,e);
 					return false;
 				}
-				isConnected = true;
+				connected = true;
 				LOG.debug("Successfully connected a channel with {} !",server);
 
 	      return true;
@@ -103,15 +103,19 @@ public class Connection {
 	 * which is used to determine when the prompt is reached.
 	 *
 	 * @param command the command to be executed
-	 * @throws SessionException
+	 * @throws ConnectionException
 	 * @throws IOException
 	 * */
-	public void execute(String command) throws SessionException, IOException
+	public void execute(String command) throws ConnectionException, IOException
 	{
-		verifyConnection();
+		if(!isConnected())
+		{
+				terminate();
+				timeout();
+		}
     command = command.trim();
     if(command.isEmpty())
-      throw new Exception("Can not issue empty commands");
+      throw new ConnectionException("Can not issue empty commands");
 		LOG.debug("Sending the command {} to {}",command,server);
 		try{
 		sendCommand(command);
@@ -122,20 +126,16 @@ public class Connection {
 		LOG.debug("Command send successfully to {}",server);
 	}
 
-	public String getResponse() throws IOException
+	public String getResponse() throws IOException, ConnectionException
 	{
 		String response = getResponse(2);
 		LOG.debug("response from {} : {}",server,response);
-		return getResponse(2);
+		return response;
 	}
 
-	public void verifyConnection() throws IOException, SessionException
+	public boolean isConnected() throws IOException
 	{
-		if(!isConnected)
-		{
-			terminate();
-			throw new SessionException("Connection Timeout");
-		}
+		return connected;
 	}
 
 	public void terminate() throws IOException
@@ -147,7 +147,7 @@ public class Connection {
 		LOG.debug("Trying to disconnect the session with server {}",server);
 		channel.disconnect();
 		session.disconnect();
-		isConnected = false;
+		connected = false;
 		LOG.debug("Conection with server {} has been terminated successfully",server);
 	}
 
@@ -162,15 +162,16 @@ public class Connection {
 	 *
 	 * @param  repeats	the number of expected repetitions of the prompt line
 	 * @return          the response received from the stream
-	 * @throws SessionException
+	 * @throws ConnectionException
+	 * @throws IOException
 	 * */
-	private String getResponse(int repeats) throws IOException, SessionException 
+	private String getResponse(int repeats) throws IOException, ConnectionException
 	{
 		LOG.debug("Start reading response from server {}",server);
 		String response = "";
 		String l1 = "" , l2 = "";
 		int times = repeats+1;
-		while(isConnected)
+		while(connected)
 		{
 			LOG.debug("Reading response from {}",server);
 			l2 = readLine();
@@ -183,7 +184,7 @@ public class Connection {
 				l1 = l2;
 		}
 		LOG.debug("Finished reading response from {}",server);
-		verifyConnection();
+		isConnected();
 		return response.substring(0, response.length()-times*l1.length()).trim();
 	}
 
@@ -198,17 +199,21 @@ public class Connection {
 	private String readLine() throws IOException
 	{
 		String line = "";
-		while(output.available()>=0)
+		while(connected && output.available()>=0)
 		{
 			int c = output.read();
 			if(c=='\n')break;
 			if(c==-1) {
-				isConnected = false;
+				connected = false;
 				break;
 			}
 			line += (char)c;
 		}
 		return line;
 	  }
+
+		private void timeout() throws ConnectionException{
+			throw new ConnectionException("Connection Timeout");
+		}
 
 }
