@@ -52,10 +52,10 @@ public class ConnectImpl  {
         {
           // TODO return error status code
           LOG.debug("Failed to connect with {}",server);
-          // return RpcResultBuilder.failed().withError(RpcError.ErrorType.APPLICATION,"Failed to connect with the server").buildFuture();
+          return RpcResultBuilder.<ConnectOutput>failed().withError(RpcError.ErrorType.APPLICATION,"Failed to connect with the server").buildFuture();
           // return RpcResultBuilder.newError(RpcError.ErrorType.APPLICATION,"Connection timeout","Failed to connect with the server");
           // return RpcResultBuilder.failed().buildFuture();
-          throw new Exception("Failed to connect");
+          // throw new Exception("Failed to connect");
         }
         String id = container.addConnection(connection);
 
