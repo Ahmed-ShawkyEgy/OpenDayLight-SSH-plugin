@@ -10,6 +10,9 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Connection {
 
 	private JSch jsch;
@@ -19,6 +22,9 @@ public class Connection {
 	private OutputStream input;
 	private PrintWriter inputWriter;
 
+	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
+	private String server;
+
 	// TODO change JSch variable to be a singleton
 
 	public Connection() {
@@ -27,22 +33,63 @@ public class Connection {
 
 	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException
 	{
+				server = user+"@"+host+":"+port;
+
+				LOG.debug("Initiating session with {}",server);
+
+				try{
 	      session=jsch.getSession(user, host, 22);
+			}catch (Exception e) {
+				LOG.debug("Failed to initiat session with {}",server,e);
+				return false;
+			}
+
+				LOG.debug("Successfull session initiation with {}",server);
+
 	      session.setPassword(password);
 	      session.setConfig("StrictHostKeyChecking", "no");
 
+				LOG.debug("Trying to connect with {}",server);
+				try{
 	      session.connect(30000);   // making a connection with timeout.
+				}catch (Exception e) {
+					LOG.debug("Failed to connect with {}",server,e);
+					return false;
+				}
 
+				LOG.debug("Successfull connection with {}",server);
+
+				LOG.debug("Trying to open a channel with {}",server);
 	      channel=session.openChannel("shell");
+
+				LOG.debug("Trying to get IO streams with {}",server);
 
 	      output = channel.getInputStream();
 	      input = channel.getOutputStream();
 	      inputWriter = new PrintWriter(input);
+				LOG.debug("IO streams retrieved successfully with {}",server);
 
+				LOG.debug("Trying to connect the channel with {}",server);
+
+				try{
 	      channel.connect();
+			}catch (Exception e) {
+				LOG.debug("Failed to connect channel with {}",server,e);
+				return false;
+			}
+				LOG.debug("Successfully connected the channel with {}",server);
 
+				LOG.debug("Trying to send empty command to {} to detect its prompt",server);
+
+				try{
 	      sendCommand("");
         getResponse(1);
+				}catch (Exception e) {
+					LOG.debug("Failed to send empty inital command to {}",server,e);
+					return false;
+				}
+				LOG.debug("Successfully connected a channel with {} !",server);
+
 	      return true;
 	}
 
@@ -57,21 +104,33 @@ public class Connection {
     command = command.trim();
     if(command.isEmpty())
       throw new Exception("Can not issue empty commands");
+		LOG.debug("Sending the command {} to {}",command,server);
+		try{
 		sendCommand(command);
 		sendCommand("");
+		}catch (Exception e) {
+			LOG.debug("Failed to send the command:{} to the server {}",command,server);
+		}
+		LOG.debug("Command send successfully to {}",server);
 	}
 
 	public String getResponse() throws IOException
 	{
+		String response = getResponse(2);
+		LOG.debug("response from {} : {}",server,response);
 		return getResponse(2);
 	}
 
 	public void terminate() throws IOException
 	{
+		LOG.debug("Trying to close all streams with server{}",server);
 		output.close();
 		input.close();
+		LOG.debug("All streams closed with server {}",server);
+		LOG.debug("Trying to disconnect the session with server {}",server);
 		channel.disconnect();
 		session.disconnect();
+		LOG.debug("Conection with server {} has been terminated successfully",server);
 
 	}
 
@@ -89,12 +148,15 @@ public class Connection {
 	 * */
 	private String getResponse(int repeats) throws IOException
 	{
+		LOG.debug("Start reading response from server {}",server);
 		String response = "";
 		String l1 = "" , l2 = "";
 		int times = repeats+1;
 		while(true)
 		{
+			LOG.debug("Waiting for response from {}",server);
 			l2 = readLine();
+			LOG.debug("Read {} from {}",l2,server);
 			response += l2;
 			if(!l1.equals("") && !l1.equals("\r") && !l1.equals("\n") && l1.equals(l2))
 				repeats--;
@@ -102,7 +164,7 @@ public class Connection {
 			if(!l2.equals("\r") && !l2.equals("\n"))
 				l1 = l2;
 		}
-
+		LOG.debug("Finished reading response from {}",server);
 		return response.substring(0, response.length()-times*l1.length()).trim();
 	}
 
