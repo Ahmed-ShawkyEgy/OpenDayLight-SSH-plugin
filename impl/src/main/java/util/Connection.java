@@ -205,6 +205,7 @@ public class Connection {
 			if(c=='\n')break;
 			if(c==-1) {
 				connected = false;
+				line += "\nConnection has been terminated";
 				break;
 			}
 			line += (char)c;
