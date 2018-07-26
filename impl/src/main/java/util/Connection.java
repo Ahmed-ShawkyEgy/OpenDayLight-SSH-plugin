@@ -86,13 +86,13 @@ public class Connection {
 				LOG.debug("Trying to send empty command to {} to detect its prompt",server);
 
 				try{
+				connected = true;
 	      sendCommand("");
         getResponse(1);
 				}catch (Exception e) {
 					LOG.debug("Failed to send empty inital command to {}",server,e);
 					return false;
 				}
-				connected = true;
 				LOG.debug("Successfully connected a channel with {} !",server);
 
 	      return true;
