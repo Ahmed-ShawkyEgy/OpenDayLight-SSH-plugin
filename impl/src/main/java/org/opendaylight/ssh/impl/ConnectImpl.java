@@ -2,33 +2,28 @@ package org.opendaylight.ssh.impl;
 
 import java.util.concurrent.Future;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.ConnectInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.ConnectOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.ConnectOutputBuilder;
-
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
-import org.opendaylight.yangtools.yang.common.RpcError;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import com.jcraft.jsch.*;
-import java.io.*;
-import util.*;
+import util.Connection;
+import util.ConnectionPool;
 
 
 public class ConnectImpl  {
 
-    private ConnectionsContainer container;
+    private ConnectionPool container;
 
 
   	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
     private String server;
 
-    public ConnectImpl(ConnectionsContainer container)
+    public ConnectImpl(ConnectionPool container)
     {
       this.container = container;
     }

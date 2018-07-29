@@ -41,6 +41,12 @@ module ssh {
         leaf command{
           type string;
         }
+        leaf timeout{
+        	type int64;
+        	default 30000;
+        	description "This api terminates the connection if a timeout occurs while reading from server.
+        		You can set the timeout in miliseconds, or you can ommit this value which then will be defaulted to 30 seconds";
+        }
     }
     output {
         leaf response {

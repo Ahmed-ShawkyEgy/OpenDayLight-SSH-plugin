@@ -2,24 +2,21 @@ package org.opendaylight.ssh.impl;
 
 import java.util.concurrent.Future;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.TerminateConnectionInput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.TerminateConnectionOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.TerminateConnectionOutputBuilder;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
-import com.jcraft.jsch.*;
-import java.io.*;
-import util.*;
+import util.ConnectionPool;
 
 
 
 public class TerminateConnectionImpl  {
 
-  private ConnectionsContainer container;
+  private ConnectionPool container;
 
-  public TerminateConnectionImpl(ConnectionsContainer container)
+  public TerminateConnectionImpl(ConnectionPool container)
   {
     this.container = container;
   }

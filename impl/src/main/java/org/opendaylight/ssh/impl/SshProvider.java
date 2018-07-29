@@ -8,29 +8,27 @@
 package org.opendaylight.ssh.impl;
 
 import org.opendaylight.controller.md.sal.binding.api.DataBroker;
+import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
+import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.ssh.rev150105.SshService;
-
-import util.*;
+import util.ConnectionPool;
 
 public class SshProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(SshProvider.class);
 
-    private final DataBroker dataBroker;
+//    private final DataBroker dataBroker;
     private final RpcProviderRegistry rpcProviderRegistry;
 
     private RpcRegistration<SshService> serviceRegistration;
-    private RpcRegistration<SshService> connectRegistration;
-
-    private ConnectionsContainer container;
+    
+    private ConnectionPool container;
 
     public SshProvider(final DataBroker dataBroker, RpcProviderRegistry rpcProviderRegistry) {
-        this.dataBroker = dataBroker;
+//        this.dataBroker = dataBroker;
         this.rpcProviderRegistry = rpcProviderRegistry;
     }
 
@@ -38,10 +36,8 @@ public class SshProvider {
      * Method called when the blueprint container is created.
      */
     public void init() {
-      // serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new CommandImpl());
-      // connectRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new ConnectImpl());
-      container = new ConnectionsContainer();
-      serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl(container));
+    	container = new ConnectionPool();
+    	serviceRegistration = rpcProviderRegistry.addRpcImplementation(SshService.class, new SshServiceImpl(container));
         LOG.info("SshProvider Session Initiated");
     }
 
@@ -54,7 +50,6 @@ public class SshProvider {
     }catch(Exception e)
     {}
       serviceRegistration.close();
-      // connectRegistration.close();
-        LOG.info("SshProvider Closed");
+      LOG.info("SshProvider Closed");
     }
 }
