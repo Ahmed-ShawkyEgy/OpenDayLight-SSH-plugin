@@ -58,9 +58,8 @@ public class ConnectImpl  {
         }
         catch(Exception e)
         {
-          connectBuilder.setStatus("Connection refused; either the ip is invalid or the maximum number of connections has been reached");
-          connectBuilder.setSessionID("undefined");
-
+        	connectBuilder.setSessionID("undefined");
+        	connectBuilder.setStatus("Connection refused");
         }
 
         return RpcResultBuilder.success(connectBuilder.build()).buildFuture();

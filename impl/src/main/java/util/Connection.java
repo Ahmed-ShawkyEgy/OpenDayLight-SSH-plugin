@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,6 +12,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSch;
@@ -28,7 +32,8 @@ public class Connection {
 	private PrintWriter inputWriter;	
 	
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+  	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
+  	private String server;
 
 	private boolean isConnected;
 	
@@ -44,7 +49,7 @@ public class Connection {
 	      session=jsch.getSession(user, host, 22);
 	      session.setPassword(password);
 	      session.setConfig("StrictHostKeyChecking", "no");
-	      
+
 	      session.connect(30000);   // making a connection with timeout.
 
 	      channel=session.openChannel("shell");
@@ -56,13 +61,13 @@ public class Connection {
 	      channel.connect();
 	    
 	      isConnected = true;
+	      server = user+"@"+host+":"+port;
 	      
 	      sendCommand("");
-	      // TODO Remove this line
-//	      System.out.println(getResponse(1,10000));
-	      getResponse(10*1000);
+
+	      getResponse(1,10*1000);
 	      
-	      return true;
+	      return isConnected;
 	}
 	
 	/**
@@ -76,7 +81,10 @@ public class Connection {
 	public void execute(String command) throws ConnectionException, IOException 
 	{
 		if(!isConnected)
+		{
 			terminate();
+			throw new ConnectException("Connection terminated");
+		}
 		
 		sendCommand(command);
 		sendCommand("");
@@ -89,7 +97,7 @@ public class Connection {
 			terminate();
 			return "Connection terminated\n";
 		}
-		return getResponse(3,timeout);
+		return getResponse(2,timeout);
 	}
 	
 	public boolean isConnected()
@@ -133,6 +141,7 @@ public class Connection {
 		{
 //			l2 = readLine(timeout);
 			l2 = tryReadLine(3, timeout);
+			LOG.debug("Read line : {} from {} ",l2,server);
 //			System.err.println(l2);
 			response += l2;
 			if(!l1.equals("") && !l1.equals("\r") && !l1.equals("\n") && !l1.equals("\r\n") && l1.equals(l2))

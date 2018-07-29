@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.UUID;
 
 import util.exception.ConnectionException;
@@ -13,6 +17,8 @@ public class ConnectionPool {
 
 	private HashMap<String, Connection> container;
 	private HashSet<String> IDpool;
+	
+  	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
 
 
 	public ConnectionPool()
@@ -23,11 +29,16 @@ public class ConnectionPool {
 
 	public Connection getConnection(String id) throws ConnectionException , IOException
 	{
+		LOG.debug("Searching for connection with id = {}",id);
 		Connection connection = container.get(id);
 		if(connection == null)
+		{
+			LOG.debug("Connection not found");
 			throw new ConnectionException("SessionID doesn't exist");
+		}
 		if(!connection.isConnected())
 		{
+			LOG.debug("Connection has been terminated before");
 			connection.terminate();
 			removeConnection(id);
 			throw new ConnectionException("Connection Timeout");
