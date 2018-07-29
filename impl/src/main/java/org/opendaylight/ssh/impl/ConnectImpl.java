@@ -42,6 +42,7 @@ public class ConnectImpl  {
         Connection connection = new Connection();
 
         try{
+        	LOG.debug("Trying to connect with server {} ",server);
 	        boolean isConnected = connection.connect(user,ip,port,password);
 	        if(!isConnected)
 	        {
@@ -50,6 +51,7 @@ public class ConnectImpl  {
 	        }
 	        String id = container.addConnection(connection);
 	
+	        LOG.debug("Connected to server {} successfully",server);
 	        connectBuilder.setStatus("Connected Successfully");
 	        connectBuilder.setSessionID(id);
 
