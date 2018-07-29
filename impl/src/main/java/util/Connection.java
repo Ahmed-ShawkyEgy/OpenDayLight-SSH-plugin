@@ -39,7 +39,7 @@ public class Connection {
 		isConnected = false;
 	}
 
-	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException, SessionException, InterruptedException, ExecutionException, TimeoutException
+	public boolean connect(String user,String host,int port,String password) throws JSchException, IOException, ConnectionException, InterruptedException, ExecutionException, TimeoutException
 	{
 	      session=jsch.getSession(user, host, 22);
 	      session.setPassword(password);
@@ -70,10 +70,10 @@ public class Connection {
 	 * which is used to determine when the prompt is reached.
 	 * 
 	 * @param command the command to be executed
-	 * @throws SessionException 
+	 * @throws ConnectionException 
 	 * @throws IOException 
 	 * */
-	public void execute(String command) throws SessionException, IOException 
+	public void execute(String command) throws ConnectionException, IOException 
 	{
 		if(!isConnected)
 			terminate();
@@ -82,7 +82,7 @@ public class Connection {
 		sendCommand("");
 	}
 	
-	public String getResponse(long timeout) throws IOException, SessionException, InterruptedException, ExecutionException, TimeoutException
+	public String getResponse(long timeout) throws IOException, ConnectionException, InterruptedException, ExecutionException, TimeoutException
 	{
 		if(!isConnected)
 		{
@@ -118,13 +118,13 @@ public class Connection {
 	 * 
 	 * @param  numberOfRetries	the number of expected repetitions of the prompt line
 	 * @return          the response received from the stream 			 
-	 * @throws SessionException 
+	 * @throws ConnectionException 
 	 * @throws IOException
 	 * @throws TimeoutException 
 	 * @throws ExecutionException 
 	 * @throws InterruptedException 
 	 * */
-	private String getResponse(int numberOfRetries,long timeout) throws IOException, SessionException, InterruptedException, ExecutionException, TimeoutException 
+	private String getResponse(int numberOfRetries,long timeout) throws IOException, ConnectionException, InterruptedException, ExecutionException, TimeoutException 
 	{
 		String response = "";
 		String l1 = "" , l2 = "";

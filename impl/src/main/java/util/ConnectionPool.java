@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import util.exception.ConnectionException;
+
 public class ConnectionPool {
 
 	private HashMap<String, Connection> container;
@@ -78,14 +80,4 @@ public class ConnectionPool {
 		}
 		throw new ConnectionException("Could not create a new Connection; Session ID pool is congested");
 	}
-
-	@SuppressWarnings("serial")
-	public class ConnectionException extends Exception
-	{
-		public ConnectionException(String message)
-		{
-			super(message);
-		}
-	}
-
 }

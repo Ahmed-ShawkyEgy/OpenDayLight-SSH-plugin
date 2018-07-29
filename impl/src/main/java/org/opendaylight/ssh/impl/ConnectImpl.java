@@ -42,20 +42,16 @@ public class ConnectImpl  {
         Connection connection = new Connection();
 
         try{
-        boolean isConnected = connection.connect(user,ip,port,password);
-        if(!isConnected)
-        {
-          // TODO return error status code
-          LOG.debug("Failed to connect with {}",server);
-          return RpcResultBuilder.<ConnectOutput>failed().withError(RpcError.ErrorType.APPLICATION,"Failed to connect with the server").buildFuture();
-          // return RpcResultBuilder.newError(RpcError.ErrorType.APPLICATION,"Connection timeout","Failed to connect with the server");
-          // return RpcResultBuilder.failed().buildFuture();
-          // throw new Exception("Failed to connect");
-        }
-        String id = container.addConnection(connection);
-
-        connectBuilder.setStatus("Connected Successfully");
-        connectBuilder.setSessionID(id);
+	        boolean isConnected = connection.connect(user,ip,port,password);
+	        if(!isConnected)
+	        {
+	          LOG.debug("Failed to connect with {}",server);
+	          return RpcResultBuilder.<ConnectOutput>failed().withError(RpcError.ErrorType.APPLICATION,"Failed to connect with the server").buildFuture();
+	        }
+	        String id = container.addConnection(connection);
+	
+	        connectBuilder.setStatus("Connected Successfully");
+	        connectBuilder.setSessionID(id);
 
         }
         catch(Exception e)
@@ -67,7 +63,5 @@ public class ConnectImpl  {
 
         return RpcResultBuilder.success(connectBuilder.build()).buildFuture();
     }
-
-
 
 }
