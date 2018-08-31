@@ -20,7 +20,7 @@ public class CommandImpl  {
 
   	private ConnectionPool container;
 
-  
+
   	public CommandImpl(ConnectionPool container)
   	{
   		this.container = container;
@@ -34,16 +34,15 @@ public class CommandImpl  {
         String id = input.getSessionID();
         String command = input.getCommand();
         long timeout = input.getTimeout();
-        
+
         try{
         	LOG.debug("Searching for a connection with id = {}",id);
         	Connection connection = container.getConnection(id);
         	LOG.debug("Connection with id = {} was found",id);
-        	LOG.debug("Trying to execute {} at {}");
         	connection.execute(command);
-          
+
         	String response = connection.getResponse(timeout);
-          
+
         	sshBuilder.setResponse(response);
         }catch(Exception e)
         {
@@ -51,7 +50,7 @@ public class CommandImpl  {
             try {
             	container.removeConnection(id);
             }catch (Exception e1) {
-            	
+
             }
         }
         return RpcResultBuilder.success(sshBuilder.build()).buildFuture();

@@ -15,9 +15,11 @@ import util.exception.ConnectionException;
 
 public class ConnectionPool {
 
+	// WARNING HashMaps are not thread safe
+	// Consider using other relevant structures
 	private HashMap<String, Connection> container;
 	private HashSet<String> IDpool;
-	
+
   	private static final Logger LOG = LoggerFactory.getLogger(Connection.class);
 
 
